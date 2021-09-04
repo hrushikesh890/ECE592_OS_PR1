@@ -15,12 +15,14 @@ pid32 fork()
 	
 	if (currpid == parentPID)
 	{
+		kprintf("CHILD PRINTING");
+		stacktrace(childPID);
 		return childPID;
 	}
 	else
 	{
 		return retPID;
-	} 
+	}
 }
 
 pid32 create_child()
@@ -34,8 +36,8 @@ pid32 create_child()
 	uint32		*a;		/* Points to list of args	*/
 	uint32		*saddr;		/* Stack address		*/
 	unsigned long	*sebp, *sbase;
-	unint32 	ssize;
-	unsigned long	*fp;
+	uint32 	ssize;
+	unsigned long	*fp, *sp;
 
 	parentptr = &proctab[currpid];
 	ssize = parentptr->prstklen;
@@ -44,7 +46,7 @@ pid32 create_child()
 	if (ssize < MINSTK)
 		ssize = MINSTK;
 	ssize = (uint32) roundmb(ssize);
-	if ( (priority < 1) || ((pid=newpid()) == SYSERR) ||
+	if ( (parentptr->priority < 1) || ((pid=newpid()) == SYSERR) ||
 	     ((saddr = (uint32 *)getstk(ssize)) == (uint32 *)SYSERR) ) {
 		restore(mask);
 		return SYSERR;
@@ -73,14 +75,17 @@ pid32 create_child()
 	prptr->prdesc[2] = CONSOLE;
 
 	/* Initialize stack as if the process was called		*/
-	
+	savsp = (uint32)saddr;
 	// Copy data
 	asm("movl %%ebp, %0\n" :"=r"(fp));
 	
 	fp++; // return address of prev stack frame
-	while(unsigned long(parentptr->prstkbase) > fp)
+	sp = (unsigned long)(parentptr->prstkbase);
+	while((unsigned long)(parentptr->prstkbase) > fp)
 	{
-		
+		*saddr = *sp;
+		sp--;
+		saddr--;
 	}	
 
 	
