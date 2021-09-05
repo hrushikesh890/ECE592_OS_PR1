@@ -35,7 +35,6 @@ status	unsleep(
 	}
 
 	/* Increment delay of next process if such a process exists */
-
 	pidnext = queuetab[pid].qnext;
 	if (pidnext < NPROC) {
 		queuetab[pidnext].qkey += queuetab[pid].qkey;
@@ -43,5 +42,6 @@ status	unsleep(
 
 	getitem(pid);			/* Unlink process from queue */
 	restore(mask);
+	
 	return OK;
 }

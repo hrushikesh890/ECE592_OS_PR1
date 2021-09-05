@@ -59,5 +59,6 @@ shellcmd xsh_ps(int nargs, char *args[])
 			prptr->prprio, prptr->prparent, prptr->prstkbase,
 			prptr->prstkptr, prptr->prstklen, (ctr1000 - prptr->prtime));
 	}
+	pr_status_syscall_summary();
 	return 0;
 }

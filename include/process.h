@@ -26,7 +26,7 @@
 #define	SYS_SUSPEND	4
 #define	SYS_WAIT	5
 #define	SYS_WAKEUP	6
-#define	SYS_YEILD	7
+#define	SYS_YIELD	7
 
 #define NSYS		8
 

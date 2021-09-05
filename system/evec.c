@@ -98,6 +98,7 @@ static long *fp;
  *------------------------------------------------------------------------
 */
 #define REGDUMP
+#define STKTRACE
 
 void trap(int inum)
 {

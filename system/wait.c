@@ -10,7 +10,7 @@ syscall	wait(
 	  sid32		sem		/* Semaphore on which to wait  */
 	)
 {
-	uint32		start, stop;
+	uint32	start, stop;
 	start =  getRTDSC();
 	intmask mask;			/* Saved interrupt mask		*/
 	struct	procent *prptr;		/* Ptr to process's table entry	*/
@@ -28,7 +28,8 @@ syscall	wait(
 		return SYSERR;
 	}
 	
-	proctab[currpid].prnumsys[SYS_SUSPEND] += 1;
+	proctab[currpid].prnumsys[SYS_WAIT] += 1;
+	
 	if (--(semptr->scount) < 0) {		/* If caller must block	*/
 		prptr = &proctab[currpid];
 		prptr->prstate = PR_WAIT;	/* Set state to waiting	*/
@@ -36,7 +37,10 @@ syscall	wait(
 		enqueue(currpid,semptr->squeue);/* Enqueue on semaphore	*/
 		resched();			/*   and reschedule	*/
 	}
-	proctab[currpid].pravclkc[SYS_SUSPEND] = (proctab[currpid].pravclkc[SYS_SUSPEND] * (proctab[currpid].prnumsys[SYS_SUSPEND] - 1) + (stop - start))/  (proctab[currpid].prnumsys[SYS_SUSPEND]);
+	
 	restore(mask);
+	stop = getRTDSC();
+	
+	proctab[currpid].pravclkc[SYS_WAIT] = (proctab[currpid].pravclkc[SYS_WAIT] * (proctab[currpid].prnumsys[SYS_WAIT] - 1) + (stop - start))/  (proctab[currpid].prnumsys[SYS_WAIT]);
 	return OK;
 }

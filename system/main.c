@@ -6,11 +6,11 @@ process	main(void)
 {
 	/* Run the Xinu shell */
 
-	//recvclr();
-	//resume(create(shell, 8192, 50, "shell", 1, CONSOLE));
-
+	recvclr();
+	resume(create(shell, 8192, 50, "shell", 1, CONSOLE));
+	pr_status_syscall_summary();
 	/* Wait for shell to exit and recreate it */
-	fork();
+	//fork();
 
 	/*while (TRUE) {
 		receive();

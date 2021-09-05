@@ -13,7 +13,6 @@ syscall	kill(
 	uint32		start, stop;
 	start =  getRTDSC();
 	pid32 procpid = currpid;
-	kprintf("KILL CALLED %d\n", currpid);
 	intmask	mask;			/* Saved interrupt mask		*/
 	struct	procent *prptr;		/* Ptr to process's table entry	*/
 	int32	i;			/* Index into descriptors	*/
@@ -62,7 +61,5 @@ syscall	kill(
 	stop = getRTDSC();
 	
 	proctab[procpid].pravclkc[SYS_KILL] = (proctab[procpid].pravclkc[SYS_KILL] * (proctab[procpid].prnumsys[SYS_KILL] - 1) + (stop - start))/  (proctab[procpid].prnumsys[SYS_KILL]);
-	kprintf("%d %d %d %d %d\n", procpid, SYS_KILL, proctab[procpid].prnumsys[SYS_KILL], stop - start, proctab[procpid].pravclkc[SYS_KILL]);
-	kprintf("KILL SUCESSFUL %d\n", procpid);
 	return OK;
 }

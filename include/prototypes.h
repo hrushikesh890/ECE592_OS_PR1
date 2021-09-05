@@ -43,6 +43,7 @@ extern	syscall	control(did32, int32, int32, int32);
 
 /* in file create.c */
 extern	pid32	create(void *, uint32, pri16, char *, uint32, ...);
+extern	pid32	newpid(void);
 
 /* in file ctxsw.S */
 extern	void	ctxsw(void *, void *);
@@ -611,6 +612,9 @@ extern	void	xdone(void);
 
 /* in file yield.c */
 extern	syscall	yield(void);
+
+/* in file pr_status_syscall_summary.c */
+extern	void	pr_status_syscall_summary();
 
 /* NETWORK BYTE ORDER CONVERSION NOT NEEDED ON A BIG-ENDIAN COMPUTER */
 #define	htons(x)  ((0xff & ((x)>>8)) | ((0xff & (x)) << 8))

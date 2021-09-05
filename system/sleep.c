@@ -52,6 +52,7 @@ syscall	sleepms(
 	proctab[currpid].prnumsys[SYS_SLEEPMS] += 1; // Set before resched and after state change because status will not increment till resched has finished
 	resched();
 	restore(mask);
+	stop =  getRTDSC();
 	proctab[currpid].pravclkc[SYS_SLEEPMS] = (proctab[currpid].pravclkc[SYS_SLEEPMS] * (proctab[currpid].prnumsys[SYS_SLEEPMS] - 1) + (stop - start))/  (proctab[currpid].prnumsys[SYS_SLEEPMS]);
 	return OK;
 }

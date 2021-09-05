@@ -40,6 +40,7 @@ syscall	suspend(
 	}
 	prio = prptr->prprio;
 	restore(mask);
+	stop = getRTDSC();
 	proctab[currpid].pravclkc[SYS_SUSPEND] = (proctab[currpid].pravclkc[SYS_SUSPEND] * (proctab[currpid].prnumsys[SYS_SUSPEND] - 1) + (stop - start))/  (proctab[currpid].prnumsys[SYS_SUSPEND]);
 	return prio;
 }

@@ -29,6 +29,5 @@ status	ready(
 	stop = getRTDSC();
 	proctab[currpid].prnumsys[SYS_READY] += 1;
 	proctab[currpid].pravclkc[SYS_READY] = (proctab[currpid].pravclkc[SYS_READY] * (proctab[currpid].prnumsys[SYS_READY] - 1) + (stop - start))/  (proctab[currpid].prnumsys[SYS_READY]);
-	kprintf("%d %d %d %d %d\n", currpid, SYS_READY, proctab[currpid].prnumsys[SYS_READY], stop - start, proctab[currpid].pravclkc[SYS_READY]);
 	return OK;
 }

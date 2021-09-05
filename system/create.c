@@ -2,8 +2,6 @@
 
 #include <xinu.h>
 
-local	int newpid();
-
 /*------------------------------------------------------------------------
  *  create  -  Create a process to start running a function on x86
  *------------------------------------------------------------------------
@@ -107,7 +105,6 @@ pid32	create(
 	stop = getRTDSC();
 	proctab[currpid].prnumsys[SYS_CREATE] += 1;
 	proctab[currpid].pravclkc[SYS_CREATE] = (proctab[currpid].pravclkc[SYS_CREATE] * (proctab[currpid].prnumsys[SYS_CREATE] - 1) + (stop - start))/  (proctab[currpid].prnumsys[SYS_CREATE]);
-	kprintf("%d %d %d %d %d\n", currpid, SYS_CREATE, proctab[currpid].prnumsys[SYS_CREATE], stop - start, proctab[currpid].pravclkc[SYS_CREATE]); 
 	return pid;
 }
 
