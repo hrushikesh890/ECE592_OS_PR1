@@ -57,6 +57,13 @@ pid32	create(
 	prptr->prdesc[1] = CONSOLE;
 	prptr->prdesc[2] = CONSOLE;
 
+	for (i = 0; i < NSYS; i++)
+	{
+		prptr->pravclkc[i] = 0;
+		prptr->prnumsys[i] = 0;
+	}
+
+
 	/* Initialize stack as if the process was called		*/
 
 	*saddr = STACKMAGIC;
@@ -83,12 +90,7 @@ pid32	create(
 	*--saddr = 0x00000200;		/* New process runs with	*/
 					/*   interrupts enabled		*/
 
-	for (i = 0; i < NSYS; i++)
-	{
-		prptr->pravclkc[i] = 0;
-		prptr->prnumsys[i] = 0;
-	}
-
+	
 	/* Basically, the following emulates an x86 "pushal" instruction*/
 
 	*--saddr = 0;			/* %eax */
