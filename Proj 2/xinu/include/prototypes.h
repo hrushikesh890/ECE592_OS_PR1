@@ -609,6 +609,17 @@ extern	syscall	yield(void);
 
 extern  syscall print_ready_list(void);
 
+extern	void	burst_execution(uint32, uint32, uint32);
+
+extern	pid32	create_user_process(void *, uint32, char *, uint32, ...);
+
+extern	void 	set_tickets(pid32, uint32);
+
+extern 	status	insert_to_user(pid32, int32);
+
+extern	uint32	get_random_number(uint32);
+
+extern	uint32	total_tickets;	
 /* NETWORK BYTE ORDER CONVERSION NOT NEEDED ON A BIG-ENDIAN COMPUTER */
 #define	htons(x)  ((0xff & ((x)>>8)) | ((0xff & (x)) << 8))
 #define	htonl(x)  ((((x)>>24) & 0x000000ff) | (((x)>> 8) & 0x0000ff00) | \

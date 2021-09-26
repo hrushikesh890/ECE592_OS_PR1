@@ -23,7 +23,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 	}
 
 	/* Point to process table entry for the current (old) process */
-
+	//if (ptold)
 	ptold = &proctab[currpid];
 	old = currpid;
 

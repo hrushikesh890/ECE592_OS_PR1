@@ -210,6 +210,7 @@ static	void	sysinit()
 
 	readylist = newqueue();
 	userprocesslist = newqueue();
+	total_tickets = 0;
 
 
 	/* initialize the PCI bus */
