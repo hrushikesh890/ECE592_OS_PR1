@@ -53,7 +53,7 @@ pid32	create(
 	prptr->turnaroundtime = 0;
 	prptr->num_ctxsw = 0;
 	prptr->arrival_time = ctr1000;
-	prptr->ptype = SYSTEM;
+	prptr->ptype = SYSTEM_P;
 
 	/* Set up stdin, stdout, and stderr descriptors for the shell	*/
 	prptr->prdesc[0] = CONSOLE;
@@ -125,6 +125,30 @@ local	pid32	newpid(void)
 	return (pid32) SYSERR;
 }
 
+
+/*------------------------------------------------------------------------
+ *  burst execution
+ *------------------------------------------------------------------------
+ */
+
+void burst_execution(uint32 number_bursts, uint32 burst_duration, 
+                     uint32 sleep_duration)
+{
+	int i;
+	uint32 tracker;
+	for (i = 0; i < number_bursts; i++)
+	{
+		tracker = ctr1000;
+		while ((tracker - ctr1000) < burst_duration)
+		{
+			//kprintf("Time %d - %d = %d\n", tracker, ctr1000, (tracker - ctr1000));
+		}
+		//kprintf("ctr1000 = %d %d", tracker, ctr1000);
+		sleepms(sleep_duration);
+	}
+}
+
+
 /*------------------------------------------------------------------------
  *  create user process
  *------------------------------------------------------------------------
@@ -174,7 +198,7 @@ pid32 create_user_process(
 	prptr->turnaroundtime = 0;
 	prptr->num_ctxsw = 0;
 	prptr->arrival_time = ctr1000;
-	prptr->ptype = USER;
+	prptr->ptype = USER_P;
 
 	/* Set up stdin, stdout, and stderr descriptors for the shell	*/
 	prptr->prdesc[0] = CONSOLE;
@@ -221,26 +245,4 @@ pid32 create_user_process(
 	*pushsp = (unsigned long) (prptr->prstkptr = (char *)saddr);
 	restore(mask);
 	return pid;
-}
-
-/*------------------------------------------------------------------------
- *  burst execution
- *------------------------------------------------------------------------
- */
-
-void burst_execution(uint32 number_bursts, uint32 burst_duration, 
-                     uint32 sleep_duration)
-{
-	int i;
-	uint32 tracker;
-	for (i = 0; i < number_bursts; i++)
-	{
-		tracker = ctr1000;
-		while ((tracker - ctr1000) < burst_duration)
-		{
-			//kprintf("Time %d - %d = %d\n", tracker, ctr1000, (tracker - ctr1000));
-		}
-		//kprintf("ctr1000 = %d %d", tracker, ctr1000);
-		sleepms(sleep_duration);
-	}
 }

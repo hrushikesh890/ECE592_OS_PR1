@@ -34,12 +34,14 @@ syscall	kill(
 	switch (prptr->prstate) {
 	case PR_CURR:
 		prptr->prstate = PR_FREE;	/* Suicide */
+		prptr->turnaroundtime = ctr1000 - prptr->arrival_time;
 		resched();
 
 	case PR_SLEEP:
 	case PR_RECTIM:
 		unsleep(pid);
 		prptr->prstate = PR_FREE;
+		prptr->turnaroundtime = ctr1000 - prptr->arrival_time;
 		break;
 
 	case PR_WAIT:
@@ -51,6 +53,7 @@ syscall	kill(
 		/* Fall through */
 
 	default:
+		prptr->turnaroundtime = ctr1000 - prptr->arrival_time;
 		prptr->prstate = PR_FREE;
 	}
 

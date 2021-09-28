@@ -38,8 +38,8 @@
 
 #define NDESC		5	/* must be odd to make procent 4N bytes	*/
 
-#define SYSTEM		0
-#define USER		1
+#define SYSTEM_P		0
+#define USER_P		1
 
 /* Definition of the process table (multiple of 32 bits) */
 

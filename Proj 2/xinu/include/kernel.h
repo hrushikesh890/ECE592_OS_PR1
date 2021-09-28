@@ -61,7 +61,7 @@ extern	qid16	userprocesslist;
 
 #define	CONTEXT	64		/* bytes in a function call context on	*/
 				/* the run-time stack			*/
-#define	QUANTUM	2		/* time slice in milliseconds		*/
+#define	QUANTUM	10		/* time slice in milliseconds		*/
 
 /* Size of the stack for the null process */
 

@@ -22,7 +22,15 @@ status	ready(
 
 	prptr = &proctab[pid];
 	prptr->prstate = PR_READY;
-	insert(pid, readylist, prptr->prprio);
+	//kprintf("02. PID %d, PTYPE = %d comp %d\n", pid, prptr->ptype, (prptr->ptype == USER_P));
+	if (prptr->ptype == USER_P)
+	{
+		insert_to_user(pid, prptr->tickets);
+	}
+	else
+	{
+		insert(pid, readylist, prptr->prprio);
+	}
 	resched();
 
 	return OK;
