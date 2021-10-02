@@ -54,6 +54,7 @@ pid32	create(
 	prptr->num_ctxsw = 0;
 	prptr->arrival_time = ctr1000;
 	prptr->ptype = SYSTEM_P;
+	prptr->tickets = 0;
 
 	/* Set up stdin, stdout, and stderr descriptors for the shell	*/
 	prptr->prdesc[0] = CONSOLE;
@@ -135,16 +136,26 @@ void burst_execution(uint32 number_bursts, uint32 burst_duration,
                      uint32 sleep_duration)
 {
 	int i;
-	uint32 tracker;
+	int z = 1;
+	intmask mask;
+	//uint32 tracker;
+	
 	for (i = 0; i < number_bursts; i++)
 	{
-		tracker = ctr1000;
-		while ((tracker - ctr1000) < burst_duration)
+		z = 1;
+		
+		while (z == 1)
 		{
-			//kprintf("Time %d - %d = %d\n", tracker, ctr1000, (tracker - ctr1000));
+			mask = disable();
+			if (proctab[currpid].runtime >= ((i+1)*burst_duration))
+			{
+				z = 0;
+			}
+			restore(mask);
 		}
-		//kprintf("ctr1000 = %d %d", tracker, ctr1000);
+		kprintf("currpid %d duration ended %d\n", proctab[currpid].runtime, currpid);
 		sleepms(sleep_duration);
+		kprintf("currpid %d sleep ended %d\n", proctab[currpid].runtime, currpid);
 	}
 }
 
@@ -200,6 +211,7 @@ pid32 create_user_process(
 	prptr->num_ctxsw = 0;
 	prptr->arrival_time = ctr1000;
 	prptr->ptype = USER_P;
+	prptr->tickets = 0;
 
 	/* Set up stdin, stdout, and stderr descriptors for the shell	*/
 	prptr->prdesc[0] = CONSOLE;

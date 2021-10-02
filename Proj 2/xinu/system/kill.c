@@ -34,7 +34,12 @@ syscall	kill(
 	switch (prptr->prstate) {
 	case PR_CURR:
 		prptr->prstate = PR_FREE;	/* Suicide */
-		prptr->turnaroundtime = ctr1000 - prptr->arrival_time;
+		//prptr->turnaroundtime = ctr1000 - prptr->arrival_time;
+		/*if (proctab[pid].ptype == USER_P)
+		{
+			kprintf("\nBIIIIIIIIG PROBLEM\nBIIIIIIIIG PROBLEM\nBIIIIIIIIG PROBLEM\n");
+			print_user_queue();
+		}*/
 		resched();
 
 	case PR_SLEEP:
@@ -49,11 +54,17 @@ syscall	kill(
 		/* Fall through */
 
 	case PR_READY:
-		getitem(pid);		/* Remove from queue */
+		kprintf("0.0.0 here\n");
+		getitem(pid);
+		if (proctab[pid].ptype == USER_P)
+		{
+			kprintf("\nREADY BIIIIIIIIG PROBLEM\nBIIIIIIIIG PROBLEM\nBIIIIIIIIG PROBLEM\n");
+			print_user_queue();
+		}		/* Remove from queue */
 		/* Fall through */
 
 	default:
-		prptr->turnaroundtime = ctr1000 - prptr->arrival_time;
+		//prptr->turnaroundtime = ctr1000 - prptr->arrival_time;
 		prptr->prstate = PR_FREE;
 	}
 

@@ -13,13 +13,13 @@ status	ready(
 	)
 {
 	register struct procent *prptr;
-
+	intmask	mask;
 	if (isbadpid(pid)) {
 		return SYSERR;
 	}
 
 	/* Set process state to indicate ready and add to ready list */
-
+	mask = disable();
 	prptr = &proctab[pid];
 	prptr->prstate = PR_READY;
 	//kprintf("02. PID %d, PTYPE = %d comp %d\n", pid, prptr->ptype, (prptr->ptype == USER_P));
@@ -31,6 +31,7 @@ status	ready(
 	{
 		insert(pid, readylist, prptr->prprio);
 	}
+	restore(mask);
 	resched();
 
 	return OK;

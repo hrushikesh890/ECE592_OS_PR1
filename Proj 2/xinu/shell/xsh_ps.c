@@ -58,7 +58,5 @@ shellcmd xsh_ps(int nargs, char *args[])
 			prptr->prprio, prptr->prparent, prptr->prstkbase,
 			prptr->prstkptr, prptr->prstklen);
 	}
-	burst_execution(3, 50, 500);
-	print_ready_list();
 	return 0;
 }

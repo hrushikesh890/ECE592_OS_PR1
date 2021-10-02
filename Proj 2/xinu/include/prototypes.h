@@ -623,6 +623,10 @@ extern	pid32	find_winner(uint32);
 
 extern	void 	remove_user_process(pid32);
 
+extern 	void	recompute_tickets();
+
+extern	void	print_user_queue();
+
 extern	uint32	total_tickets;	
 /* NETWORK BYTE ORDER CONVERSION NOT NEEDED ON A BIG-ENDIAN COMPUTER */
 #define	htons(x)  ((0xff & ((x)>>8)) | ((0xff & (x)) << 8))
