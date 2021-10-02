@@ -209,7 +209,10 @@ static	void	sysinit()
 	/* Create a ready list for processes */
 
 	readylist = newqueue();
-	userprocesslist = newqueue();
+	high = newqueue();
+	med = newqueue();
+	low = newqueue();
+	async_event_flag = FALSE;
 
 
 	/* initialize the PCI bus */

@@ -14,6 +14,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 	struct procent *ptold;	/* Ptr to table entry for old process	*/
 	struct procent *ptnew;	/* Ptr to table entry for new process	*/
 	pid32	old;
+	bool8	user_flag;
 
 	/* If rescheduling is deferred, record attempt and return */
 
@@ -22,28 +23,81 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 		return;
 	}
 
+
+	
 	/* Point to process table entry for the current (old) process */
 
 	ptold = &proctab[currpid];
 	old = currpid;
+	
+	
 
 	if (ptold->prstate == PR_CURR) {  /* Process remains eligible */
-		if (ptold->prprio > firstkey(readylist)) {
+		if ((ptold->prprio > firstkey(readylist)) && (ptold->ptype == SYSTEM_P) && nonempty(readylist)) {
 			return;
 		}
 
 		/* Old process will no longer remain current */
+		if (ptold->ptype != SYSTEM_P)
+		{
+			if (ptold->time_alloted >= TIME_ALLOTMENT)
+			{
+				if (ptold->ptype == USER_P_LOW)
+				{
+					ptold->time_alloted = 0;
+				}
+				else
+				{
+					ptold->ptype += 1;
+					ptold->time_alloted = 0;
+				}
+			}
+		}
 
 		ptold->prstate = PR_READY;
-		insert(currpid, readylist, ptold->prprio);
+		if (ptold->ptype == SYSTEM_P)
+		{
+			insert(currpid, readylist, ptold->prprio);
+		}
+		else
+		{
+			insert_to_user(currpid);
+		}
+	}
+
+	if (priority_boost_timer >= PRIORITY_BOOST_PERIOD)
+	{
+		priority_boost_timer = 0;
+		priority_boost();
+	}
+
+	// Decide whether to mlfq schedule
+	if (nonempty(readylist) && (firstid(readylist) != 0))
+	{
+		user_flag = FALSE;
+		currpid = dequeue(readylist);
+	}
+	else{
+		if (nonempty(high))
+		{
+			currpid = dequeue(high);
+		}
+		else if (nonempty(med))
+		{
+			currpid = dequeue(med);
+		}
+		else
+		{
+			currpid = dequeue(low);
+		}
 	}
 
 	/* Force context switch to highest priority ready process */
 
-	currpid = dequeue(readylist);
+	
 	ptnew = &proctab[currpid];
 	ptnew->prstate = PR_CURR;
-	preempt = QUANTUM;		/* Reset time slice for process	*/
+	preempt = get_time_slice(ptnew->ptype);		/* Reset time slice for process	*/
 	#ifdef DEBUG_CTXSW
 		if(old != currpid)
 		{

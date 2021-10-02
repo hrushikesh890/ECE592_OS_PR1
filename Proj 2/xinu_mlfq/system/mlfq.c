@@ -2,38 +2,34 @@
 #include <xinu.h>
 
 qid16   userprocesslist;
-status insert_to_user(pid32 pid, int32 key)
+qid16	high;
+qid16	med;
+qid16	low;
+
+status insert_to_user(pid32 pid)
 {
-	int16	curr;			/* Runs through items in a queue*/
-	int16	prev;			/* Holds previous node index	*/
-	qid16	q = userprocesslist;
-	if (isbadqid(q) || isbadpid(pid)) {
-		return SYSERR;
-	}
+	int type = proctab[pid].ptype;
 
-	curr = firstid(q);
-	while (queuetab[curr].qkey >= key) {
-		if ((queuetab[curr].qkey == key) && (curr > pid))
-		{
+	switch (type)
+	{
+		case USER_P_HIGH:
+			enqueue(pid, high);
+			proctab[pid].time_alloted = TIME_ALLOTMENT;
 			break;
-		}
-		else
-		{
-			curr = queuetab[curr].qnext;
-		}
+		case USER_P_MED:
+			enqueue(pid, med);
+			proctab[pid].time_alloted = TIME_ALLOTMENT;
+			break;
+		case USER_P_LOW:
+			enqueue(pid, low);
+			proctab[pid].time_alloted = TIME_ALLOTMENT;
+			break;
+		default:
+			break;
 	}
-
-	/* Insert process between curr node and previous node */
-
-	prev = queuetab[curr].qprev;	/* Get index of previous node	*/
-	queuetab[pid].qnext = curr;
-	queuetab[pid].qprev = prev;
-	queuetab[pid].qkey = key;
-	queuetab[prev].qnext = pid;
-	queuetab[curr].qprev = pid;
-	total_tickets += key;
 	return OK;
 }
+/*
 void remove_user_process(pid32 pid)
 {
 	int16 prev;
@@ -42,4 +38,58 @@ void remove_user_process(pid32 pid)
 	queuetab[queuetab[pid].qnext].qprev = prev;
 	total_tickets -= queuetab[pid].qkey;
 	
+}*/
+
+int get_time_slice(int type)
+{
+	int retVal = QUANTUM;
+	switch (type)
+	{
+		
+		case USER_P_HIGH:
+			retVal = QUANTUM;
+			break;
+		case USER_P_MED:
+			retVal = 2*QUANTUM;
+			break;
+		case USER_P_LOW:
+			retVal = 4*QUANTUM;
+			break;
+		case SYSTEM_P:
+			retVal = QUANTUM;
+		default:
+			break;
+	}
+	return retVal;
 }
+
+void priority_boost()
+{
+	pid32 deqpid;
+	
+	while((!isbadqid(med)) && nonempty(med))
+	{
+		deqpid = dequeue(med);
+		enqueue(deqpid, high);
+		proctab[deqpid].ptype = USER_P_HIGH;
+	}
+
+	while((!isbadqid(low)) && nonempty(low))
+	{
+		deqpid = dequeue(low);
+		enqueue(deqpid, high);
+		proctab[deqpid].ptype = USER_P_HIGH;
+	}
+	reset_allotment();
+}
+
+void reset_allotment()
+{
+	int i;
+
+	for (i = 0; i < NPROC; i++)
+	{
+		proctab[i].time_alloted = 0;
+	}
+}
+

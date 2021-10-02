@@ -52,7 +52,7 @@ void	resched(void)		// /* Assumes interrupts are disabled	*/
 	}
 
 	
-	if (user_flag)
+	if (user_flag && (total_tickets != 0))
 	{
 		currpid = find_winner(get_random_number(total_tickets));
 		kprintf("total tickets = %d and runtime = %d\n", total_tickets, proctab[currpid].runtime);

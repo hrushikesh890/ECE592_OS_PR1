@@ -54,6 +54,7 @@ pid32	create(
 	prptr->num_ctxsw = 0;
 	prptr->arrival_time = ctr1000;
 	prptr->ptype = SYSTEM_P;
+	prptr->time_alloted = 0;
 
 	/* Set up stdin, stdout, and stderr descriptors for the shell	*/
 	prptr->prdesc[0] = CONSOLE;
@@ -198,7 +199,8 @@ pid32 create_user_process(
 	prptr->turnaroundtime = 0;
 	prptr->num_ctxsw = 0;
 	prptr->arrival_time = ctr1000;
-	prptr->ptype = USER_P;
+	prptr->ptype = USER_P_HIGH;
+	prptr->alloted_time = 0;
 
 	/* Set up stdin, stdout, and stderr descriptors for the shell	*/
 	prptr->prdesc[0] = CONSOLE;

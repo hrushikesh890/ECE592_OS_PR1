@@ -12,6 +12,9 @@ void	clkhandler()
 
 	/* Decrement the ms counter, and see if a second has passed */
 	ctr1000++;
+	proctab[currpid].runtime++;
+	priority_boost_timer++;
+	proctab[currpid].time_alloted++;
 	if((--count1000) <= 0) {
 
 		/* One second has passed, so increment seconds count */
