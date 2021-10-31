@@ -223,6 +223,11 @@ static	void	sysinit()
 	{
 		active_lock_list[i] = 0;
 	}
+	
+	for (i = 0; i < NPILOCKS; i++)
+	{
+		pi_lock_list[i] = 0;
+	}
 
 	for (i = 0; i < NDEVS; i++) {
 		init(i);

@@ -1,13 +1,17 @@
 #define	NSPINLOCKS	20
 #define	NLOCKS		20
 #define	NALOCKS		20
+#define	NPILOCKS	20
 				
 extern	int	num_spinlocks;
 extern	int	num_locks;
 extern	int	num_active_locks;
+extern	int	num_pi_locks;
 extern	void	 sync_printf(char*, ...);
 extern	uint32 test_and_set(uint32* , uint32);
 pid32	active_lock_list[NALOCKS];
+pid32	pi_lock_list[NPILOCKS];
+
 typedef	uint32	sl_lock_t;
 
 typedef struct	lock_t{
@@ -24,6 +28,17 @@ qid16	q_park;
 bool8	about_to_park;
 int	id;
 }al_lock_t;
+
+typedef struct	pi_lock_t{
+bool8	flag;
+uint32	guard;
+qid16	q_park;
+bool8	about_to_park;
+int	id;
+pri16	original_priority;
+pri16	highest_priority;	
+}pi_lock_t;
+
 extern	void sync_printf(char *, ...);
 extern 	syscall	sl_initlock(sl_lock_t*);
 extern	syscall sl_lock(sl_lock_t*);
@@ -43,3 +58,10 @@ extern	void	al_set_park(al_lock_t*);
 extern 	void	al_park(al_lock_t*);
 extern 	void	al_unpark(al_lock_t*, pid32);
 extern	bool8	al_trylock(al_lock_t*);
+
+extern	syscall	pi_initlock(pi_lock_t*);
+extern	syscall	pi_lock(pi_lock_t*);
+extern	syscall	pi_unlock(pi_lock_t*);
+extern	void	pi_set_park(pi_lock_t*);
+extern 	void	pi_park(pi_lock_t*);
+extern 	void	pi_unpark(pi_lock_t*, pid32);

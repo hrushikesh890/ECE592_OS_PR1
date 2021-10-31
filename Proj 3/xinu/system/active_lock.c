@@ -6,7 +6,7 @@ bool8 detect_deadlock(al_lock_t* l)
 	int counter = 0; 
 	int id = l->id;
 	//sync_printf("detect Called id = %d active_lock_list = %d, counter = %d\n", l->id, active_lock_list[id]);
-	while ((counter < NALOCKS) && (active_lock_list[id] != 0))
+	while ((id != -1) && (counter < num_active_locks) && (active_lock_list[id] != 0))
 	{
 		//sync_printf("detect l-id = %d active_lock_list = %d , wait for = %d\n", l->id, active_lock_list[id],proctab[active_lock_list[id]].wait_for);
 		if (proctab[active_lock_list[id]].wait_for == l->id)
@@ -68,7 +68,7 @@ void print_deadlock(al_lock_t* l)
 	kprintf("lock_detected=");
 	for (i = 0; i < counter; i++)
 	{
-		kprintf("%d", deadlock_list[i]);
+		kprintf("P%d", deadlock_list[i]);
 		if (i != (counter - 1))
 		{
 			kprintf("-");
@@ -169,7 +169,7 @@ void	al_park(al_lock_t *l)
 void	al_unpark(al_lock_t *l, pid32 pid)
 {
 	l->about_to_park = 0;
-	proctab[pid].wait_for = 0;
+	proctab[pid].wait_for = -1;
 	active_lock_list[l->id] = pid;
 	ready(pid);
 }
