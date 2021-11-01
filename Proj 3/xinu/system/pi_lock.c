@@ -9,6 +9,7 @@ void priority_inheritance(pi_lock_t *l)
 	{
 		if (proctab[pi_lock_list[id]].prprio < l->highest_priority)
 		{
+			kprintf("Priority_change=P%d::%d-%d\n", pi_lock_list[id], proctab[pi_lock_list[id]].prprio, l->highest_priority);
 			proctab[pi_lock_list[id]].prprio = l->highest_priority;
 			id = proctab[pi_lock_list[id]].wait_for;
 		}
@@ -36,9 +37,13 @@ void recalculate_highest_priority(pi_lock_t *l)
 
 void restore_priority(pi_lock_t *l)
 {
+	if (l->original_priority != proctab[currpid].prprio){
+	sync_printf("Priority_change=P%d::%d-%d\n", currpid, proctab[currpid].prprio, l->original_priority);}
 	proctab[currpid].prprio = l->original_priority;
+	
 	if ((l->original_priority == l->highest_priority) && nonempty(l->q_park))
 	{
+		l->highest_priority = 0;
 		recalculate_highest_priority(l);
 	}
 }
@@ -138,10 +143,12 @@ void	pi_unpark(pi_lock_t *l, pid32 pid)
 	l->about_to_park = 0;
 	proctab[pid].wait_for = -1;
 	pi_lock_list[l->id] = pid;
+	l->original_priority = proctab[pid].prprio;
 	if (l->highest_priority > proctab[pid].prprio)
 	{
-		l->original_priority = proctab[pid].prprio;
 		proctab[pid].prprio = l->highest_priority;
+		sync_printf("Priority_change=P%d::%d-%d\n", pid, l->original_priority, l->highest_priority);
 	}
+	l->guard = 0;
 	ready(pid);
 }

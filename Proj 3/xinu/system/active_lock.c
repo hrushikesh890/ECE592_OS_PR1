@@ -100,7 +100,7 @@ syscall	al_initlock(al_lock_t *l)
 syscall al_lock(al_lock_t *l)
 {
 	while (test_and_set(&l->guard, 1) == 1);
-	// sync_printf("currpid = %d, locking\n", currpid);
+	 //sync_printf("currpid = %d, locking\n", currpid);
 	if (l->flag == 0)
 	{
 		l->flag = 1;
@@ -124,7 +124,7 @@ syscall al_lock(al_lock_t *l)
 
 syscall al_unlock(al_lock_t *l)
 {
-	//sync_printf("Should not be called yet %d\n", currpid);
+	//sync_printf("Should not be called yet %d l->guard = %d\n", currpid, l->guard);
 	while (test_and_set(&l->guard, 1) == 1);
 
 	if (isempty(l->q_park))
@@ -147,6 +147,7 @@ void	al_set_park(al_lock_t *l)
 
 void	al_park(al_lock_t *l)
 {
+	//sync_printf("park called %d\n", currpid);
 	if ((!l->about_to_park) && isempty(l->q_park))
 	{
 		// do nothing
@@ -169,8 +170,10 @@ void	al_park(al_lock_t *l)
 void	al_unpark(al_lock_t *l, pid32 pid)
 {
 	l->about_to_park = 0;
+	//sync_printf("pid = %d\n", pid);
 	proctab[pid].wait_for = -1;
 	active_lock_list[l->id] = pid;
+	//l->guard = 0;
 	ready(pid);
 }
 
@@ -185,6 +188,7 @@ bool8 al_trylock(al_lock_t *l)
 	}
 	else
 	{
+		l->guard = 0;
 		return 0;
 	}
 	return 1;
